@@ -1,34 +1,27 @@
-# Oracle Cloud Common Bill Ingestion
+# Oracle Rightsize Compute Instances
 
 ## What it does
 
-This Policy Template is used to automatically take Cost Reports from Oracle Cloud (OCI) and send them to Flexera CBI so that Oracle Cloud costs are visible in Flexera One. An incident is raised on every execution of the policy to provide status information to the user.
+This policy checks for any pending Oracle Cloud Advisor recommendations for underutilized or idle compute instances and generates an incident for each if any recommendations are found. Both incidents created by this policy are emailed to the user.
 
 ## Functional Details
 
-- The policy uses the Oracle Cloud Object Storage API to connect to the bucket containing the Cost & Usage Reports and obtain the relevant reports for the specified month (or current month if none is specified.)
-- The policy then sends those reports, unmodified, into a Flexera CBI endpoint so that they can be ingested and then visible on the platform.
-- The policy does this over the course of multiple runs to avoid hitting memory and other constraints; it is recommended that the default frequency of 15 minutes be used.
-- The policy requires that a valid Oracle CBI endpoint exists, a valid Oracle Cloud credential exists in Flexera One, and that Cost & Usage Reporting is enabled in Oracle Cloud.
+- The policy leverages the Oracle Cloud Advisor API to gather any pending recommendations for underutilized or idle compute instances.
+- All recommendations are derived from Oracle Cloud Advisor directly and are based on the user's Oracle Cloud Advisor configuration.
 
 ## Input Parameters
 
 This policy has the following input parameters required when launching the policy.
 
-- *Billing Period* - The year and month to process bills for in YYYY-MM format. Leave this parameter blank to always do the current month. Example: 2022-09
-- *Flexera CBI Endpoint* - The name of the Flexera CBI endpoint to use. Example: cbi-oi-oracle-oraclecloud
-- *Oracle Cloud Region* - The region of the Oracle Cloud Object Storage bucket containing the cost and usage reports. Example: us-phoenix-1
-- *Oracle Cloud Cost & Usage Bucket* - OCID of the Oracle Cloud Object Storage bucket containing the Cost and Usage reports.
-- *Block Size* - The number of files to upload with each execution of the policy. Changing from the default value of 20 is not recommended.
-- *Commit Delay (Hours)* - The number of hours to wait between committing bill uploads. This is to avoid overloading the CBI system and to ensure bill ingestion occurs at a predictable cadence. The default value of 12 is recommended.
+- *Email addresses* - Email addresses of the recipients you wish to notify when new incidents are created.
+- *Oracle Cloud Tenant ID/Root Compartment* - OCID of the Oracle Cloud root compartment. In most cases, this is the Tenant ID. Example: ocid1.tenancy.oc1..aaaaaaaagk6jz9kt13ycn8bbzsr6oexk9fg0xw2l3pryv8hjsw9eumzx4rcf
+- *Oracle Cloud Region* - The primary region of the Oracle Cloud account. Example: us-phoenix-1
 
 ## Prerequisites
 
 This policy uses [credentials](https://docs.flexera.com/flexera/EN/Automation/ManagingCredentialsExternal.htm) for connecting to the cloud -- in order to apply this policy, you must have a credential registered in the system that is compatible with this policy. If there are no credentials listed when you apply the policy, please contact your cloud admin and ask them to register a credential that is compatible with this policy. The information below should be consulted when creating the credential.
 
-This policy also requires a valid Oracle CBI endpoint created using the [Flexera Bill Connect API](https://reference.rightscale.com/optima-bill/#/CBIBillConnects/CBIBillConnects_create), as well as Cost & Usage Reporting to be enabled within the Oracle Cloud environment.
-
-Additionally, the policy requires that the Flexera Bill Upload limit be increased to 125 on your Flexera One organization. Please contact [Flexera Support](https://community.flexera.com/t5/Using-the-Case-Portal/Contact-Flexera-support/ta-p/94684) to have this done.
+This policy also requires that [Oracle Cloud Advisor](https://docs.oracle.com/en-us/iaas/Content/CloudAdvisor/Tasks/cloudadvisor-getting_started.htm) is enabled and producing recommendations within the Oracle Cloud Infrastructure environment.
 
 ### Credential configuration
 
@@ -38,10 +31,9 @@ Provider tag value to match this policy: `oracle`
 
 Required permissions for the Oracle policy:
 
-- define tenancy usage-report as [OCID]
-- endorse group [Group] to read objects in tenancy usage-report
+- Allow group [Group] to manage optimizer-api-family in tenancy
 
-[OCID] should be replaced with the OCID shown on the Cost & Usage Reports page in Oracle Cloud's web UI. [Group] should be replaced with a group that the user associated with the Oracle Cloud credential is a member of.
+[Group] should be replaced with a group that the user associated with the Oracle Cloud credential is a member of.
 
 Note: Oracle Cloud credentials cannot be added in Flexera One; the [Flexera Credential Management API](https://reference.rightscale.com/cred-management/#/Credentials/Credentials_create_oracle) must be used to create the credential.
 

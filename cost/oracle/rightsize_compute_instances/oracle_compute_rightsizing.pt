@@ -26,7 +26,7 @@ end
 
 parameter "param_root_compartment" do
   type "string"
-  label "Oracle Cloud Root Compartment"
+  label "Oracle Cloud Tenant ID/Root Compartment"
   description "OCID of the Oracle Cloud Tenant ID/root compartment."
 end
 

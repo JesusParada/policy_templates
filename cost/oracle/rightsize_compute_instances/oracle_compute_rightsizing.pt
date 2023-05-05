@@ -48,14 +48,12 @@ credentials "auth_oracle" do
   tags "provider=oracle"
 end
 
-# credentials "auth_flexera" do
-#   schemes "oauth2"
-#   label "Flexera_Automation"
-#   description "Select FlexeraOne OAuth2 credentials"
-#   tags "provider=flexera"
-# end
-
-auth "auth_flexera", type: "rightscale"
+credentials "auth_flexera" do
+  schemes "oauth2"
+  label "Flexera_Automation"
+  description "Select FlexeraOne OAuth2 credentials"
+  tags "provider=flexera"
+end
 
 ###############################################################################
 # Pagination
@@ -322,7 +320,7 @@ script "js_oci_filtered_recommendations", type: "javascript" do
     rightsize_instances: rightsize_instances,
     rightsize_message: rightsize_message,
     idle_instances: idle_instances,
-    idle_message: idle_message,
+    idle_message: idle_message
   }
 EOS
 end

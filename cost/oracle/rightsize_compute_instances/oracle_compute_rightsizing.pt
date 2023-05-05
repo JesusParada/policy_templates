@@ -228,6 +228,7 @@ script "js_oci_filtered_recommendations", type: "javascript" do
   parameters "ds_oci_recommendations_underutilized", "ds_oci_recommendations_terminated", "ds_oci_recommendation_actions", "ds_currency"
   result "result"
   code <<-EOS
+  // Create lists containing all of the recommendation IDs for underutilized and idle recommendations
   rightsize_recommendations = _.filter(ds_oci_recommendations_underutilized, function(item) {
     return item['name'] == "cost-management-compute-host-underutilized-name"
   })
